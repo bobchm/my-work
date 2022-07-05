@@ -9,14 +9,14 @@ function ActionRow(props) {
         <Stack direction="row" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
             <IconButton 
                 aria-label="complete" 
-                disabled 
+                disabled={!props.anySelected}
                 color="primary"
                 onClick={props.onComplete}>
                 <DoneIcon />
             </IconButton>
             <IconButton 
                 aria-label="delete" 
-                disabled 
+                disabled={!props.anySelected} 
                 color="primary"
                 onClick={props.onDelete}>
                 <DeleteIcon />

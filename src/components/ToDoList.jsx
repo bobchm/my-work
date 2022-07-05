@@ -9,8 +9,8 @@ function ToDoList(props) {
             {props.items.map((todoItem, idx) => (
                 <ToDoItem
                     key={idx}
-                    id={idx}
-                    item={todoItem}
+                    id={todoItem.toDoId}
+                    item={todoItem.text}
                     onChecked={props.onChecked}
                 />
             ))}
