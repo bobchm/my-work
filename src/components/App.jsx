@@ -39,8 +39,6 @@ function App() {
     }
 
     function doCheckboxToggle(event, id) {
-        console.log(event.target.checked);
-        console.log(id);
         var any = event.target.checked;
         for (let i = 0; i < items.length; i++) {
             if (items[i].toDoId === id) {

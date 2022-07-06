@@ -12,6 +12,7 @@ function ToDoList(props) {
                     id={todoItem.toDoId}
                     item={todoItem.text}
                     onChecked={props.onChecked}
+                    isChecked={todoItem.checked}
                 />
             ))}
         </FormGroup>
