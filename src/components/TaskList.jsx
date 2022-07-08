@@ -1,23 +1,20 @@
 import React, { useState } from "react";
-import ToDoItem from "./ToDoItem";
+import Task from "./Task";
 import FormGroup from '@mui/material/FormGroup';
 
-function ToDoList(props) {
+export default function TaskList(props) {
     return (
         <div>
         <FormGroup>
-            {props.items.map((todoItem, idx) => (
-                <ToDoItem
+            {props.tasks.map((task, idx) => (
+                <Task
                     key={idx}
-                    id={todoItem.toDoId}
-                    item={todoItem.text}
+                    id={task.id}
+                    item={task.item}
                     onChecked={props.onChecked}
-                    isChecked={todoItem.checked}
                 />
             ))}
         </FormGroup>
         </div>
     );
 }
-
-export default ToDoList;

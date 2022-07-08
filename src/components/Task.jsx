@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-function ToDoItem(props) {
+export default function Task(props) {
 
     return (
         <FormControlLabel
@@ -13,5 +13,3 @@ function ToDoItem(props) {
             label={props.item} />
     );
 }
-
-export default ToDoItem;

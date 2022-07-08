@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-function WorkingInput(props) {
+export default function WorkingInput(props) {
     return (<form onSubmit={props.addItem}>
         <Stack direction="row" alignItems="center" justifyContent="flex-start" spacing={2}>
             <TextField variant="outlined" onChange={props.handleChange} value={props.inputText} />
@@ -15,4 +15,3 @@ function WorkingInput(props) {
     </form>);
 }
 
-export default WorkingInput;

@@ -11,15 +11,56 @@ const dbo = require("../db/conn");
 // This help convert the id from string to ObjectId for the _id.
 const ObjectId = require("mongodb").ObjectId;
 
+// parse the query attributes into a JSON search object
+function validQP(qp) {
+  return (qp && (typeof qp === "string" && qp.length > 0));
+}
+
+function parseQuery(reqQuery) {
+  var qry = '{';
+  var any = false;
+
+  if (validQP(reqQuery.completed)) {
+    qry += '"completed": ';
+    if (reqQuery.completed === "false") {
+      qry += "false";
+    } else {
+      qry += "true";
+    }
+    any = true;
+  }
+  
+  if (validQP(reqQuery.due)) {
+    if (any) {
+      qry += ", ";
+    }
+    any = true;
+    qry += '"due": "' + reqQuery + '"';
+  }
+  
+  if (validQP(reqQuery.tag)) {
+    if (any) {
+      qry += ", ";
+    }
+    any = true;
+    qry += '"tag": "' + reqQuery + '"';
+  }
+  qry += '}';
+  console.log(qry);
+  return JSON.parse(qry);
+}
 
 // This section will help you get a list of all the tasks.
 taskRoutes.route("/task").get(function (req, res) {
-  let db_connect = dbo.getDb("myWorkDB");
+  console.log("inside /task");
+  let db_connect = dbo.getDb();
+  let query = parseQuery(req.query);
   db_connect
     .collection("tasks")
-    .find({})
+    .find(query)
     .toArray(function (err, result) {
       if (err) throw err;
+      console.log("result:");
       res.json(result);
     });
 });
@@ -43,7 +84,7 @@ taskRoutes.route("/task/add").post(function (req, response) {
     item: req.body.item,
     due: req.body.due,
     note: req.body.note,
-    tags: req.body.tags,
+    tags: req.body.tag,
     completed: req.body.completed
   };
   db_connect.collection("tasks").insertOne(myobj, function (err, res) {
@@ -61,7 +102,7 @@ taskRoutes.route("/update/:id").post(function (req, response) {
       item: req.body.item,
       due: req.body.due,
       note: req.body.note,
-      tags: req.body.tags,
+      tags: req.body.tag,
       completed: req.body.completed
     },
   };
@@ -85,4 +126,4 @@ taskRoutes.route("/:id").delete((req, response) => {
   });
 });
 
-module.exports = recordRoutes;
+module.exports = taskRoutes;
