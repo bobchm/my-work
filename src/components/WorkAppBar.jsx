@@ -23,7 +23,8 @@ export default function ButtonAppBar(props) {
 
   function buildOptions() {
     return {
-      completed: completed
+      completed: completed,
+      due: due
     }
   }
 
@@ -77,7 +78,7 @@ export default function ButtonAppBar(props) {
               key={0}
               onClick={(event) => onCompletedClick(event)}
             >
-              {completed 
+              {completed
                 ? <><ListItemIcon><Check /></ListItemIcon>Completed</>
                 : <ListItemText inset>Completed</ListItemText>}
             </MenuItem>

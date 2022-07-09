@@ -5,20 +5,36 @@ import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
+import { breadcrumbsClasses } from "@mui/material";
 
 export default function App() {
     const [tasks, setTasks] = useState([]);
     const [inputText, setInputText] = useState("");
     const [anySelected, setAnySelected] = useState(false);
     const [completed, setCompleted] = useState(false);
+    const [due, setDue] = useState("All");
     
     // This fetches the tasks from the database.
     useEffect(() => {
 
         function getParams() {
-            return "?" + new URLSearchParams({
-                completed: completed
-            });
+            var params = {completed: completed};
+            var sDate = "";
+
+            switch (due) {
+                case "Today":
+                    sDate = getToday();
+                    break;
+                case "Tomorrow":
+                    sDate = addDays(getToday(), 1);
+                    break;
+            }
+            if (sDate.length > 0) {
+                params = {...params, due: sDate};
+            }
+
+            // do tags later
+            return "?" + new URLSearchParams(params);
         }
 
         async function getTasks() {
@@ -31,14 +47,13 @@ export default function App() {
             }
 
             const tasks = await response.json();
-            console.log(tasks);
             setTasks(tasks);
         }
 
         getTasks();
 
         return;
-    }, [tasks.length, completed]);
+    }, [tasks.length, completed, due]);
 
     // handler for typing into the task text box
     function handleChange(event) {
@@ -46,18 +61,32 @@ export default function App() {
         setInputText(newValue);
     }
 
-    function getToday() {
-        var dt = new Date();
+    function encodeDate(dt) {
         return (dt.getMonth() + 1) + "-" + dt.getDate() + "-" + dt.getFullYear();
+    }
+
+    function addDays(dateS, nDays) {
+        var startDate = new Date(dateS);
+        var newDate = new Date();
+        newDate.setDate(startDate.getDate() + nDays);
+        return encodeDate(newDate);
+    }
+
+    function getToday() {
+        return encodeDate(new Date());
     }
 
     // add a new task
     async function addTask(event) {
         var text = inputText.trim();
         if (text.length > 0) {
+            var dueDate = getToday();
+            if (due === "Tomorrow") {
+                dueDate = addDays(dueDate, 1);
+            }
             var jtask = {
                 item: text,
-                due: getToday(),
+                due: dueDate,
                 note: "",
                 tag: "",
                 completed: false
@@ -93,7 +122,6 @@ export default function App() {
 
     // they toggled one of the task checkboxes - enable/disable relevant buttons
     function doCheckboxToggle(event, id) {
-        console.log(id);
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i]._id === id) {
@@ -124,7 +152,7 @@ export default function App() {
     }
 
     // handler for the task completion button
-    async function completeTask(id) {
+    async function changeTask(id, key, value) {
 
         // get the task from the database
         const id_s = id.toString();
@@ -142,15 +170,13 @@ export default function App() {
           return;
         }
 
-        console.log(task);
-  
         // mark as complete
-        task.completed = true;
+        var newTask = {...task, [key]: value};
 
         // save back to database
         await fetch(`http://localhost:5000/update/${id_s}`, {
             method: "POST",
-            body: JSON.stringify(task),
+            body: JSON.stringify(newTask),
             headers: {
               'Content-Type': 'application/json'
             },
@@ -160,7 +186,18 @@ export default function App() {
     function handleComplete() {
         const newItems = tasks.filter((item) => {
             if (item.checked) {
-                completeTask(item._id);
+                changeTask(item._id, "completed", true);
+            }
+            return (!item.checked);
+        });
+
+        setTasks(newItems);
+    }
+
+    function handlePostpone() {
+        const newItems = tasks.filter((item) => {
+            if (item.checked) {
+                changeTask(item._id, "due", addDays(item.due, 1));
             }
             return (!item.checked);
         });
@@ -171,6 +208,7 @@ export default function App() {
     function menuSettingsCallback(settings) {
         if (settings) {
             setCompleted(settings.completed);
+            setDue(settings.due);
         }
     }
 
@@ -179,8 +217,8 @@ export default function App() {
         <div>
             <WorkAppBar settingsCallback={menuSettingsCallback} />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
-            <SettingsDisplay completed={completed} due="All" />
-                <ActionRow onDelete={handleDelete} onComplete={handleComplete} anySelected={anySelected}/>
+                <SettingsDisplay completed={completed} due={due} />
+                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
                 <TaskList tasks={tasks} onChecked={doCheckboxToggle} />
             </Stack>

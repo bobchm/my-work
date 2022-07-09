@@ -35,7 +35,7 @@ function parseQuery(reqQuery) {
       qry += ", ";
     }
     any = true;
-    qry += '"due": "' + reqQuery + '"';
+    qry += '"due": "' + reqQuery.due + '"';
   }
   
   if (validQP(reqQuery.tag)) {
@@ -43,7 +43,7 @@ function parseQuery(reqQuery) {
       qry += ", ";
     }
     any = true;
-    qry += '"tag": "' + reqQuery + '"';
+    qry += '"tag": "' + reqQuery.tag + '"';
   }
   qry += '}';
   return JSON.parse(qry);
