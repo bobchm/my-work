@@ -10,14 +10,14 @@ export default function App() {
     const [tasks, setTasks] = useState([]);
     const [inputText, setInputText] = useState("");
     const [anySelected, setAnySelected] = useState(false);
-
+    const [completed, setCompleted] = useState(false);
     
     // This fetches the tasks from the database.
     useEffect(() => {
 
         function getParams() {
             return "?" + new URLSearchParams({
-                completed: false
+                completed: completed
             });
         }
 
@@ -38,7 +38,7 @@ export default function App() {
         getTasks();
 
         return;
-    }, [tasks.length]);
+    }, [tasks.length, completed]);
 
     // handler for typing into the task text box
     function handleChange(event) {
@@ -62,7 +62,6 @@ export default function App() {
                 tag: "",
                 completed: false
             }
-            console.log(jtask);
 
             await fetch("http://localhost:5000/task/add", {
                 method: "POST",
@@ -97,7 +96,7 @@ export default function App() {
         console.log(id);
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
-            if (tasks[i].id === id) {
+            if (tasks[i]._id === id) {
                 tasks[i].checked = event.target.checked;
             } else if (tasks[i].checked) {
                 any = true;
@@ -106,36 +105,79 @@ export default function App() {
         setAnySelected(any);
     }
 
+    async function deleteTask(id) {
+        await fetch(`http://localhost:5000/${id}`, {
+            method: "DELETE"
+        });        
+    }
+
     // handler for the delete button
     function handleDelete() {
-        console.log("Delete");
-
-        var newItems = tasks.filter((item) => {
+        const newItems = tasks.filter((item) => {
+            if (item.checked) {
+                deleteTask(item._id);
+            }
             return (!item.checked);
         });
 
-        // This is ridiculous but there doesn't seem to be
-        // a good way to force React to reset its checkbox
-        // list. If you don't do this, the checked state is
-        // retained after the delete.
-        setTasks([]);
-        setTimeout(function() {
-            setTasks(newItems);
-        }, 10);
+        setTasks(newItems);
     }
 
     // handler for the task completion button
-    function handleComplete() {
-        console.log("Complete")
+    async function completeTask(id) {
 
-        // same as Delete for now
-        handleDelete();
+        // get the task from the database
+        const id_s = id.toString();
+        const response = await fetch(`http://localhost:5000/task/${id_s}`);
+  
+        if (!response.ok) {
+          const message = `An error has occured: ${response.statusText}`;
+          window.alert(message);
+          return;
+        }
+  
+        const task = await response.json();
+        if (!task) {
+          window.alert(`Task with id ${id_s} not found`);
+          return;
+        }
+
+        console.log(task);
+  
+        // mark as complete
+        task.completed = true;
+
+        // save back to database
+        await fetch(`http://localhost:5000/update/${id_s}`, {
+            method: "POST",
+            body: JSON.stringify(task),
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+    }
+
+    function handleComplete() {
+        const newItems = tasks.filter((item) => {
+            if (item.checked) {
+                completeTask(item._id);
+            }
+            return (!item.checked);
+        });
+
+        setTasks(newItems);
+    }
+
+    function menuSettingsCallback(settings) {
+        if (settings) {
+            setCompleted(settings.completed);
+        }
     }
 
     // render
     return (
         <div>
-            <WorkAppBar />
+            <WorkAppBar settingsCallback={menuSettingsCallback} />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <ActionRow onDelete={handleDelete} onComplete={handleComplete} anySelected={anySelected}/>
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />

@@ -9,7 +9,7 @@ export default function TaskList(props) {
             {props.tasks.map((task, idx) => (
                 <Task
                     key={idx}
-                    id={task.id}
+                    id={task._id}
                     item={task.item}
                     onChecked={props.onChecked}
                 />
