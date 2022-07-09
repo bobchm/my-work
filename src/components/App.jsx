@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
+import Stack from '@mui/material/Stack';
 import WorkAppBar from "./WorkAppBar";
+import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
-import Stack from '@mui/material/Stack';
-import { getInputAdornmentUtilityClass, getTableBodyUtilityClass } from "@mui/material";
 
 export default function App() {
     const [tasks, setTasks] = useState([]);
@@ -179,6 +179,7 @@ export default function App() {
         <div>
             <WorkAppBar settingsCallback={menuSettingsCallback} />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
+            <SettingsDisplay completed={completed} due="All" />
                 <ActionRow onDelete={handleDelete} onComplete={handleComplete} anySelected={anySelected}/>
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
                 <TaskList tasks={tasks} onChecked={doCheckboxToggle} />

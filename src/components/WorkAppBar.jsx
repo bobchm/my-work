@@ -7,28 +7,27 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Check from '@mui/icons-material/Check';
 
 export default function ButtonAppBar(props) {
   const [anchor, setAnchor] = useState(null);
-  const [selected, setSelected] = useState(-1);
+  const [completed, setCompleted] = useState(false);
+  const [due, setDue] = useState("All");
 
-  const options = ["Completed"];
-
-  function isCompletedIndex(idx) {
-    return (idx >= 0 && idx < options.length && options[idx] === "Completed")
-  }
+  const dueOptions = ["All", "Today", "Tomorrow"];
 
   function buildOptions() {
     return {
-      completed: isCompletedIndex(selected)
+      completed: completed
     }
   }
 
   const openMenu = (event) => {
-    console.log(event.currentTarget);
     setAnchor(event.currentTarget);
   };
 
@@ -39,19 +38,17 @@ export default function ButtonAppBar(props) {
     }
   };
 
-  const onMenuItemClick = (event, index) => {
-    if (isCompletedIndex(index)) {
-      if (index === selected) {
-        setSelected(-1);
-      } else {
-        setSelected(index);
-      }
-    }
+  const onCompletedClick = (event) => {
+    setCompleted(!completed);
   };
+
+  const onDueClick = (event, idx) => {
+    setDue(dueOptions[idx]);
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" alignItems="flex-start">
         <Toolbar>
           <IconButton
             size="large"
@@ -71,25 +68,36 @@ export default function ButtonAppBar(props) {
             // TransitionComponent={Slide}
             PaperProps={{
               style: {
-                maxHeight: 40 * 4,
+                maxHeight: 40 * 5,
                 width: "20ch",
               },
             }}
           >
-            {options.map((option, index) => (
-              <MenuItem
-                key={index}
-                onClick={(event) => onMenuItemClick(event, index)}
+            <MenuItem
+              key={0}
+              onClick={(event) => onCompletedClick(event)}
+            >
+              {completed 
+                ? <><ListItemIcon><Check /></ListItemIcon>Completed</>
+                : <ListItemText inset>Completed</ListItemText>}
+            </MenuItem>
+            <Divider />
+            {dueOptions.map(function(opt, idx) {
+              return (<MenuItem
+                key={idx}
+                onClick={(event) => onDueClick(event, idx)}
               >
-                {index === selected && <ListItemIcon><Check /></ListItemIcon>}
-                {option}
-              </MenuItem>
-            ))}
+                {due === dueOptions[idx] 
+                  ? <><ListItemIcon><Check /></ListItemIcon>{opt}</>
+                  : <ListItemText inset>{opt}</ListItemText>}
+              </MenuItem>);
+            }
+            )}
           </Menu>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My Work
           </Typography>
-          <IconButton color="inherit"><SettingsIcon /></IconButton>
+          <IconButton color="inherit" edge="end"><SettingsIcon /></IconButton>
         </Toolbar>
       </AppBar>
     </Box>

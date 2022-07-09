@@ -3,8 +3,9 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DoneIcon from '@mui/icons-material/Done';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
-function ActionRow(props) {
+export default function ActionRow(props) {
     return (
         <Stack direction="row" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
             <IconButton 
@@ -21,8 +22,12 @@ function ActionRow(props) {
                 onClick={props.onDelete}>
                 <DeleteIcon />
             </IconButton>
-        </Stack>
+            <IconButton 
+                aria-label="postpone" 
+                disabled={!props.anySelected} 
+                color="primary"
+                onClick={props.onPostpone}>
+                <PostAddIcon />
+            </IconButton>        </Stack>
     )
 }
-
-export default ActionRow;
