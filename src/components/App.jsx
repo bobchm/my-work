@@ -6,8 +6,6 @@ import TaskList from "./TaskList";
 import Stack from '@mui/material/Stack';
 import { getInputAdornmentUtilityClass, getTableBodyUtilityClass } from "@mui/material";
 
-var todoIds = 0;
-
 export default function App() {
     const [tasks, setTasks] = useState([]);
     const [inputText, setInputText] = useState("");
@@ -18,7 +16,9 @@ export default function App() {
     useEffect(() => {
 
         function getParams() {
-            return "";
+            return "?" + new URLSearchParams({
+                completed: false
+            });
         }
 
         async function getTasks() {
@@ -47,7 +47,8 @@ export default function App() {
     }
 
     function getToday() {
-        return "07-08-2022";
+        var dt = new Date();
+        return (dt.getMonth() + 1) + "-" + dt.getDate() + "-" + dt.getFullYear();
     }
 
     // add a new task
@@ -58,7 +59,7 @@ export default function App() {
                 item: text,
                 due: getToday(),
                 note: "",
-                tags: [],
+                tag: "",
                 completed: false
             }
             console.log(jtask);
@@ -77,8 +78,17 @@ export default function App() {
           
 
             setInputText("");
-            setTasks([]);
+
+            // force useEffects
+            setTasks(tasks => [...tasks, jtask]);
         }
+        //event.preventDefault();
+    }
+
+    function addTaskSubmit(event) {
+        setTimeout(function() {
+            addTask(event);
+        }, 100);
         event.preventDefault();
     }
 
@@ -128,7 +138,7 @@ export default function App() {
             <WorkAppBar />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <ActionRow onDelete={handleDelete} onComplete={handleComplete} anySelected={anySelected}/>
-                <WorkInput addItem={addTask} handleChange={handleChange} inputText={inputText} />
+                <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
                 <TaskList tasks={tasks} onChecked={doCheckboxToggle} />
             </Stack>
         </div>

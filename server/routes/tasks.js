@@ -54,6 +54,7 @@ function parseQuery(reqQuery) {
 taskRoutes.route("/task").get(function (req, res) {
   console.log("inside /task");
   let db_connect = dbo.getDb();
+  console.log(req.query);
   let query = parseQuery(req.query);
   db_connect
     .collection("tasks")
