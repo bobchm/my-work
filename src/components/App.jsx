@@ -5,7 +5,6 @@ import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
-import { breadcrumbsClasses } from "@mui/material";
 
 export default function App() {
     const [tasks, setTasks] = useState([]);
@@ -19,7 +18,7 @@ export default function App() {
 
         function getParams() {
             var params = {completed: completed};
-            var sDate = "";
+            var sDate;
 
             switch (due) {
                 case "Today":
@@ -28,6 +27,8 @@ export default function App() {
                 case "Tomorrow":
                     sDate = addDays(getToday(), 1);
                     break;
+                default:
+                    sDate = "";
             }
             if (sDate.length > 0) {
                 params = {...params, due: sDate};
@@ -53,6 +54,7 @@ export default function App() {
         getTasks();
 
         return;
+          // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tasks.length, completed, due]);
 
     // handler for typing into the task text box
@@ -223,12 +225,12 @@ export default function App() {
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <SettingsDisplay completed={completed} due={due} />
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
-                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
                 <TaskList 
                     tasks={tasks} 
                     onChecked={doCheckboxToggle}
                     onEdit={handleEdit}
                 />
+                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
             </Stack>
         </div>
     );

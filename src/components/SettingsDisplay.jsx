@@ -26,7 +26,7 @@ export default function SettingsDisplay(props) {
     }
 
     return (
-        <Box sx={{margin: "0px", width: '100%', boxShadow: 2, borderRadius: "10px", backgroundColor: 'azure'}}>
+        <Box sx={{margin: "0px", width: '100%', boxShadow: 2, borderRadius: "5px", backgroundColor: 'background.paper'}}>
         <Typography variant="body" component="div" align='center' sx={{ fontSize: 14, height: 1, color: 'black' }}>
         {text}
       </Typography>
