@@ -133,6 +133,10 @@ export default function App() {
         setAnySelected(any);
     }
 
+    function handleEdit(event, id) {
+        window.alert(`Editing ${id}`)
+    }
+
     async function deleteTask(id) {
         await fetch(`http://localhost:5000/${id}`, {
             method: "DELETE"
@@ -218,9 +222,13 @@ export default function App() {
             <WorkAppBar settingsCallback={menuSettingsCallback} />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <SettingsDisplay completed={completed} due={due} />
-                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
-                <TaskList tasks={tasks} onChecked={doCheckboxToggle} />
+                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
+                <TaskList 
+                    tasks={tasks} 
+                    onChecked={doCheckboxToggle}
+                    onEdit={handleEdit}
+                />
             </Stack>
         </div>
     );
