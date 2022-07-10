@@ -3,6 +3,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
@@ -11,7 +12,6 @@ export default function Task(props) {
 
     return (
         <ListItem
-        key={props.id}
         secondaryAction={
           <IconButton 
             edge="end" 
@@ -44,7 +44,8 @@ export default function Task(props) {
                     textOverflow: 'ellipsis'
             }}} />
         </ListItemButton>
-      </ListItem>       
+        <Divider />
+    </ListItem>       
     );
 }
 

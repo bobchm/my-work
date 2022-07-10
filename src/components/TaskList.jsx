@@ -20,19 +20,21 @@ export default function TaskList(props) {
                     borderRadius: "10px"
                     }}>
             <div className="TaskList-header">{props.tasks.length} Tasks Found</div>
-            {props.tasks.map((task, idx) => (
-                <>
-                {(idx === 0) && <Divider />}
-                <Task
-                    key={idx}
-                    id={task._id}
-                    item={task.item}
-                    onChecked={props.onChecked}
-                    onEdit={props.onEdit}
-                />
-                <Divider />
-                </>
-            ))}
+            {props.tasks.map(function(task, idx) {
+                return (
+                    <div key={idx}>
+                        {idx === 0 && <Divider />}
+                        <Task
+                            key={idx}
+                            id={task._id}
+                            item={task.item}
+                            onChecked={props.onChecked}
+                            onEdit={props.onEdit}
+                        />
+                        <Divider />
+                    </div>);
+            }
+            )}
         </List>
     );
 }

@@ -84,7 +84,6 @@ export default function Edit() {
               <Box sx={{ flexGrow: 1, borderRadius: "10px" }}>
                   <AppBar
                         position="static"
-                        alignItems="flex-start"
                         sx={{ borderRadius: "10px 10px 0px 0px" }}>
                         <Toolbar>
                             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
