@@ -8,6 +8,7 @@ import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
 import {addDays, getToday} from "../dates";
 import { getCookie, setCookie } from "../cookies";
+import taskURL from "../taskURL";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -48,7 +49,7 @@ export default function MyWork() {
 
         // get all or filtered tasks from MongoDB
         async function getTasks() {
-            const response = await fetch('http://localhost:5000/task/' + getParams());
+            const response = await fetch(taskURL('task/' + getParams()));
 
             if (!response.ok) {
                 const message = `An error occured: ${response.statusText}`;
@@ -107,7 +108,7 @@ export default function MyWork() {
                 completed: false
             }
 
-            await fetch("http://localhost:5000/task/add", {
+            await fetch(taskURL("task/add"), {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -156,7 +157,7 @@ export default function MyWork() {
 
     // delete a task from MongoDB
     async function deleteTask(id) {
-        await fetch(`http://localhost:5000/${id}`, {
+        await fetch(taskURL(`${id}`), {
             method: "DELETE"
         });        
     }
@@ -178,7 +179,7 @@ export default function MyWork() {
 
         // get the task from the database
         const id_s = id.toString();
-        const response = await fetch(`http://localhost:5000/task/${id_s}`);
+        const response = await fetch(taskURL(`${id_s}`));
   
         if (!response.ok) {
           const message = `An error has occured: ${response.statusText}`;
@@ -196,7 +197,7 @@ export default function MyWork() {
         var newTask = {...task, [key]: value};
 
         // save back to database
-        await fetch(`http://localhost:5000/update/${id_s}`, {
+        await fetch(taskURL(`update/${id_s}`), {
             method: "POST",
             body: JSON.stringify(newTask),
             headers: {

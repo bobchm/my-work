@@ -17,7 +17,7 @@ function validQP(qp) {
 }
 
 function parseQuery(reqQuery) {
-  var qry = '{';
+  var qry = '';
   var any = false;
 
   if (validQP(reqQuery.completed)) {
@@ -45,8 +45,12 @@ function parseQuery(reqQuery) {
     any = true;
     qry += '"tag": "' + reqQuery.tag + '"';
   }
-  qry += '}';
-  return JSON.parse(qry);
+
+  // if no fields have been added, make sure 'item' exists so it's a task and not something else
+  if (qry.length <= 0) {
+    qry = '"emp_age": { $exists: true }';
+  }
+  return JSON.parse('{' + qry + '}');
 }
 
 // This section will help you get a list of all the tasks.
@@ -86,6 +90,7 @@ taskRoutes.route("/task/add").post(function (req, response) {
   };
   db_connect.collection("tasks").insertOne(myobj, function (err, res) {
     if (err) throw err;
+    addTag(req.body.tag);
     response.json(res);
   });
 });
@@ -108,6 +113,7 @@ taskRoutes.route("/update/:id").post(function (req, response) {
     .updateOne(myquery, newvalues, function (err, res) {
       if (err) throw err;
       console.log("1 document updated");
+      addTag(req.body.tag);
       response.json(res);
     });
 });
@@ -122,5 +128,56 @@ taskRoutes.route("/:id").delete((req, response) => {
     response.json(obj);
   });
 });
+
+// This section gets a list of all tags
+taskRoutes.route("/tags").get(function (req, res) {
+  let db_connect = dbo.getDb();
+  db_connect
+      .collection("tasks")
+      .findOne({tagList: true}, function (err, result) {
+        if (err || (!result)) {
+          res.json([]);
+        } else {
+          res.json(result.tags);
+        }
+      });
+});
+
+// add a tag
+function addTag(tag) {
+  if (!tag || tag.length <= 0) return;
+  let db_connect = dbo.getDb();
+  db_connect
+      .collection("tasks")
+      .findOne({tagList: true}, function (err, result) {
+        if (err) throw err;
+
+        // add if not there
+        if (!result) {
+          console.log("no tag record");
+          db_connect.collection("tasks").insertOne({tagList: true, tags: [tag]}, function (err, res) {
+            if (err) throw err;
+            return;
+          });
+        } else if (!result.tags.includes(tag)) {
+          console.log("adding-" + tag);
+          var newList = result.tags;
+          newList.push(tag);
+          newObj =  {$set: {tagList: true,
+                    tags: newList
+                  },};
+          console.log("about to add, result-" + result); 
+          db_connect
+          .collection("tasks")
+          .updateOne({_id: result._id}, newObj, function (err, res) {
+            if (err) throw err;
+            return;
+          });
+        } else {
+          console.log(tag + " already there");
+        }
+      });
+};
+
 
 module.exports = taskRoutes;
