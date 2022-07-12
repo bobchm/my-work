@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
@@ -7,12 +7,11 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import MyDatePicker from "./MyDatePicker";
-import { encodeDate } from "./Dates";
+import { encodeDate } from "../dates";
 
 export default function Edit() {
     const [form, setForm] = useState({
@@ -24,19 +23,6 @@ export default function Edit() {
       });
       const params = useParams();
       const navigate = useNavigate();
-
-          // we can pass in state for due and completed (and later tag)
-      var initDue = "All";
-      var initCompleted = false;
-      const [searchParams] = useSearchParams();
-      if (searchParams.get("due")) {
-          initDue = searchParams.get("due");
-      }
-      if (searchParams.get("completed")) {
-          initCompleted = searchParams.get("completed");
-      }
-      const [due] = useState(initDue);
-      const [completed] = useState(initCompleted);
     
       useEffect(() => {
         async function fetchData() {
@@ -52,7 +38,7 @@ export default function Edit() {
           const task = await response.json();
           if (!task) {
             window.alert(`Task with id ${id} not found`);
-            goHome();
+            navigate("/");
             return;
           }
     
@@ -62,18 +48,13 @@ export default function Edit() {
         fetchData();
     
         return;
-      }, [params.id]);
+      }, [params.id, navigate]);
     
       // These methods will update the state properties.
       function updateForm(value) {
         return setForm((prev) => {
           return { ...prev, ...value };
         });
-      }
-
-      // navigate back to the main page, preserving state
-      function goHome() {
-        navigate(`/?completed=${completed}&due=${due}`);
       }
     
       async function onSubmit(e) {
@@ -95,7 +76,7 @@ export default function Edit() {
           },
         });
     
-        goHome();
+        navigate("/");
       }
 
       // callback for the date picker
@@ -159,7 +140,7 @@ export default function Edit() {
                               Save
                           </Button>
                           <Button
-                              onClick={() => goHome()}
+                              onClick={() => navigate("/")}
                               variant="contained"
                               startIcon={<CancelIcon />}>
                               Cancel

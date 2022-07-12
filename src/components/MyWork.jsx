@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Stack from '@mui/material/Stack';
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
-import {encodeDate, addDays, getToday} from "./Dates";
+import {addDays, getToday} from "../dates";
+import { getCookie, setCookie } from "../cookies";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
@@ -14,18 +15,10 @@ export default function MyWork() {
     const [anySelected, setAnySelected] = useState(false);
     
     // we can pass in state for due and completed (and later tag)
-    var initDue = "All";
-    var initCompleted = false;
-    const [searchParams] = useSearchParams();
-    if (searchParams.get("due")) {
-        initDue = searchParams.get("due");
-    }
-    if (searchParams.get("completed")) {
-        initCompleted = searchParams.get("completed");
-    }
+    const [initDue, initCompleted] = restoreDisplayContext("All", false);
     const [due, setDue] = useState(initDue);
     const [completed, setCompleted] = useState(initCompleted);
-
+ 
     const navigate = useNavigate();
     
     // This fetches the tasks from the database.
@@ -53,6 +46,7 @@ export default function MyWork() {
             return "?" + new URLSearchParams(params);
         }
 
+        // get all or filtered tasks from MongoDB
         async function getTasks() {
             const response = await fetch('http://localhost:5000/task/' + getParams());
 
@@ -65,12 +59,31 @@ export default function MyWork() {
             const tasks = await response.json();
             setTasks(tasks);
         }
-
+        saveDisplayContext();
         getTasks();
 
         return;
           // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tasks.length, completed, due]);
+
+    // set or get the diplay context across sessions
+    function restoreDisplayContext(defaultDue, defaultCompleted) {
+        var cDueDate;
+        var cCompleted;
+        if ((cDueDate = getCookie("dueDate")) === undefined) {
+            cDueDate = defaultDue;
+        } else {
+        }
+        if ((cCompleted = getCookie("completed")) === undefined) {
+            cCompleted = defaultCompleted;
+        }
+        return [cDueDate, cCompleted];
+    }
+
+    function saveDisplayContext() {
+        setCookie("dueDate", due, {'max-age': 60*60*24});
+        setCookie("completed", completed, {'max-age': 60*60*24});
+    }
 
     // handler for typing into the task text box
     function handleChange(event) {
@@ -135,10 +148,13 @@ export default function MyWork() {
         setAnySelected(any);
     }
 
+    // jump to the edit dialog page to edit a task
     function handleEdit(event, id) {
+        // we're leaving this page, save the due date and completed incomplete context
         navigate(`/edit/${id}?due=${due}&completed=${completed}`);
     }
 
+    // delete a task from MongoDB
     async function deleteTask(id) {
         await fetch(`http://localhost:5000/${id}`, {
             method: "DELETE"
@@ -221,7 +237,7 @@ export default function MyWork() {
     // render
     return (
         <div>
-            <WorkAppBar settingsCallback={menuSettingsCallback} />
+            <WorkAppBar settingsCallback={menuSettingsCallback} completed={completed} due={due} />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <SettingsDisplay completed={completed} due={due} />
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />

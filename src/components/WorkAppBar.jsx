@@ -16,8 +16,8 @@ import Check from '@mui/icons-material/Check';
 
 export default function ButtonAppBar(props) {
   const [anchor, setAnchor] = useState(null);
-  const [completed, setCompleted] = useState(false);
-  const [due, setDue] = useState("All");
+  const [completed, setCompleted] = useState(props.completed);
+  const [due, setDue] = useState(props.due);
 
   const dueOptions = ["All", "Today", "Tomorrow"];
 

@@ -12,9 +12,3 @@ code {
     monospace;
 }
 
-.TaskList-header {
-  transform: translate(5%, 5%);
-  font-family: 'Roboto', Arial, Helvetica, sans-serif;
-  margin-bottom: 10px;
-  width: 250px;
-}
