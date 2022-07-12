@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
@@ -11,6 +11,8 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
+import MyDatePicker from "./MyDatePicker";
+import { encodeDate } from "./Dates";
 
 export default function Edit() {
     const [form, setForm] = useState({
@@ -22,6 +24,19 @@ export default function Edit() {
       });
       const params = useParams();
       const navigate = useNavigate();
+
+          // we can pass in state for due and completed (and later tag)
+      var initDue = "All";
+      var initCompleted = false;
+      const [searchParams] = useSearchParams();
+      if (searchParams.get("due")) {
+          initDue = searchParams.get("due");
+      }
+      if (searchParams.get("completed")) {
+          initCompleted = searchParams.get("completed");
+      }
+      const [due] = useState(initDue);
+      const [completed] = useState(initCompleted);
     
       useEffect(() => {
         async function fetchData() {
@@ -37,7 +52,7 @@ export default function Edit() {
           const task = await response.json();
           if (!task) {
             window.alert(`Task with id ${id} not found`);
-            navigate("/");
+            goHome();
             return;
           }
     
@@ -47,13 +62,18 @@ export default function Edit() {
         fetchData();
     
         return;
-      }, [params.id, navigate]);
+      }, [params.id]);
     
       // These methods will update the state properties.
       function updateForm(value) {
         return setForm((prev) => {
           return { ...prev, ...value };
         });
+      }
+
+      // navigate back to the main page, preserving state
+      function goHome() {
+        navigate(`/?completed=${completed}&due=${due}`);
       }
     
       async function onSubmit(e) {
@@ -75,7 +95,12 @@ export default function Edit() {
           },
         });
     
-        navigate("/");
+        goHome();
+      }
+
+      // callback for the date picker
+      function handleDateChange(newValue) {
+        updateForm({ due: encodeDate(newValue) });
       }
     
       // This following section will display the form that takes input from the user to update the data.
@@ -111,10 +136,10 @@ export default function Edit() {
                           onChange={(e) => updateForm({ item: e.target.value })}
                           label={"Task"}
                       />
-                      <TextField
-                          value={form.due}
-                          onChange={(e) => updateForm({ due: e.target.value })}
-                          label={"Due"}
+                      <MyDatePicker
+                        date={new Date(form.due)}
+                        label={"Due Date"}
+                        callback={handleDateChange}
                       />
                       <TextField
                           value={form.note}
@@ -134,7 +159,7 @@ export default function Edit() {
                               Save
                           </Button>
                           <Button
-                              onClick={() => navigate("/")}
+                              onClick={() => goHome()}
                               variant="contained"
                               startIcon={<CancelIcon />}>
                               Cancel

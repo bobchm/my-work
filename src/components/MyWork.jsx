@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Stack from '@mui/material/Stack';
 import WorkAppBar from "./WorkAppBar";
 import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
+import {encodeDate, addDays, getToday} from "./Dates";
 
 export default function MyWork() {
     const [tasks, setTasks] = useState([]);
     const [inputText, setInputText] = useState("");
     const [anySelected, setAnySelected] = useState(false);
-    const [completed, setCompleted] = useState(false);
-    const [due, setDue] = useState("All");
+    
+    // we can pass in state for due and completed (and later tag)
+    var initDue = "All";
+    var initCompleted = false;
+    const [searchParams] = useSearchParams();
+    if (searchParams.get("due")) {
+        initDue = searchParams.get("due");
+    }
+    if (searchParams.get("completed")) {
+        initCompleted = searchParams.get("completed");
+    }
+    const [due, setDue] = useState(initDue);
+    const [completed, setCompleted] = useState(initCompleted);
 
     const navigate = useNavigate();
     
@@ -64,21 +76,6 @@ export default function MyWork() {
     function handleChange(event) {
         const newValue = event.target.value;
         setInputText(newValue);
-    }
-
-    function encodeDate(dt) {
-        return (dt.getMonth() + 1) + "-" + dt.getDate() + "-" + dt.getFullYear();
-    }
-
-    function addDays(dateS, nDays) {
-        var startDate = new Date(dateS);
-        var newDate = new Date();
-        newDate.setDate(startDate.getDate() + nDays);
-        return encodeDate(newDate);
-    }
-
-    function getToday() {
-        return encodeDate(new Date());
     }
 
     // add a new task
@@ -139,7 +136,7 @@ export default function MyWork() {
     }
 
     function handleEdit(event, id) {
-        navigate(`/edit/${id}`);
+        navigate(`/edit/${id}?due=${due}&completed=${completed}`);
     }
 
     async function deleteTask(id) {
