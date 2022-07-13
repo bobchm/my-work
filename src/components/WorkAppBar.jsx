@@ -18,13 +18,15 @@ export default function ButtonAppBar(props) {
   const [anchor, setAnchor] = useState(null);
   const [completed, setCompleted] = useState(props.completed);
   const [due, setDue] = useState(props.due);
+  const [taskList, setTaskList] = useState(props.taskList);
 
   const dueOptions = ["All", "Today", "Tomorrow"];
 
   function buildOptions() {
     return {
       completed: completed,
-      due: due
+      due: due,
+      taskList: taskList
     }
   }
 
@@ -35,7 +37,9 @@ export default function ButtonAppBar(props) {
   function closeMenu(settingsCallback) {
     setAnchor(null);
     if (settingsCallback) {
-      settingsCallback(buildOptions());
+      var options = buildOptions();
+      console.log("options: ", options);
+      settingsCallback(options);
     }
   };
 
@@ -45,6 +49,14 @@ export default function ButtonAppBar(props) {
 
   const onDueClick = (event, idx) => {
     setDue(dueOptions[idx]);
+  }
+
+  const onTaskListClick = (event, idx, taskLists) => {
+    if (idx < 0) {
+      setTaskList("");
+    } else {
+      setTaskList(taskLists[idx]);
+    }
   }
 
   return (
@@ -69,7 +81,7 @@ export default function ButtonAppBar(props) {
             // TransitionComponent={Slide}
             PaperProps={{
               style: {
-                maxHeight: 40 * 5,
+                maxHeight: 40 * 10,
                 width: "20ch",
               },
             }}
@@ -94,6 +106,25 @@ export default function ButtonAppBar(props) {
               </MenuItem>);
             }
             )}
+            { props.taskLists && props.taskLists.length > 0 && <Divider />}
+            {props.taskLists && props.taskLists.map(function(tl, idx) {
+              return (<MenuItem
+                key={idx}
+                onClick={(event) => onTaskListClick(event, idx, props.taskLists)}
+              >
+                {tl === taskList 
+                  ? <><ListItemIcon><Check /></ListItemIcon>{tl}</>
+                  : <ListItemText inset>{tl}</ListItemText>}
+              </MenuItem>);
+            }
+            )}
+            <MenuItem
+                onClick={(event) => onTaskListClick(event, -1, props.taskLists)}
+              >
+                {taskList === ""
+                  ? <><ListItemIcon><Check /></ListItemIcon>{"All Task Lists"}</>
+                  : <ListItemText inset>{"All Task Lists"}</ListItemText>}
+              </MenuItem>
           </Menu>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My Work

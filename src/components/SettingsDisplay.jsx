@@ -14,16 +14,16 @@ export default function SettingsDisplay(props) {
         }
 
         if (props.completed === true) {
-            text += "Complete";
+            text += "Completed";
         } else {
             text += "Incomplete"
         }
     }
-    if (props.hasOwnProperty('tag')) {
+    if (props.hasOwnProperty('taskList')) {
         if (text.length > 0) {
-            text += " | ";
+            text += " ";
         }
-        text += props.tag;
+        text += props.taskList;
     }
 
     return (

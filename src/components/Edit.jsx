@@ -19,7 +19,7 @@ export default function Edit() {
         item: "",
         due: "",
         note: "",
-        tag: "",
+        taskList: "",
         completed: false
       });
       const params = useParams();
@@ -64,7 +64,7 @@ export default function Edit() {
           item: form.item,
           due: form.due,
           note: form.note,
-          tag: form.tag,
+          taskList: form.taskList,
           completed: form.completed
         };
     
@@ -129,9 +129,9 @@ export default function Edit() {
                           label={"Note"}
                       />
                       <TextField
-                          value={form.tag}
-                          onChange={(e) => updateForm({ tag: e.target.value })}
-                          label={"Tag"}
+                          value={form.taskList}
+                          onChange={(e) => updateForm({ taskList: e.target.value })}
+                          label={"Task List"}
                       />
                       <Stack direction="row" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                           <Button

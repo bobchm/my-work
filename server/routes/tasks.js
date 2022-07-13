@@ -38,12 +38,12 @@ function parseQuery(reqQuery) {
     qry += '"due": "' + reqQuery.due + '"';
   }
   
-  if (validQP(reqQuery.tag)) {
+  if (validQP(reqQuery.taskList)) {
     if (any) {
       qry += ", ";
     }
     any = true;
-    qry += '"tag": "' + reqQuery.tag + '"';
+    qry += '"taskList": "' + reqQuery.taskList + '"';
   }
 
   // if no fields have been added, make sure 'item' exists so it's a task and not something else
@@ -85,12 +85,12 @@ taskRoutes.route("/task/add").post(function (req, response) {
     item: req.body.item,
     due: req.body.due,
     note: req.body.note,
-    tag: req.body.tag,
+    taskList: req.body.taskList,
     completed: req.body.completed
   };
   db_connect.collection("tasks").insertOne(myobj, function (err, res) {
     if (err) throw err;
-    addTag(req.body.tag);
+    addTaskList(req.body.taskList);
     response.json(res);
   });
 });
@@ -104,7 +104,7 @@ taskRoutes.route("/update/:id").post(function (req, response) {
       item: req.body.item,
       due: req.body.due,
       note: req.body.note,
-      tag: req.body.tag,
+      taskList: req.body.taskList,
       completed: req.body.completed
     },
   };
@@ -113,7 +113,7 @@ taskRoutes.route("/update/:id").post(function (req, response) {
     .updateOne(myquery, newvalues, function (err, res) {
       if (err) throw err;
       console.log("1 document updated");
-      addTag(req.body.tag);
+      addTaskList(req.body.taskList);
       response.json(res);
     });
 });
@@ -129,44 +129,41 @@ taskRoutes.route("/:id").delete((req, response) => {
   });
 });
 
-// This section gets a list of all tags
-taskRoutes.route("/tags").get(function (req, res) {
+// This section gets a list of all lists
+taskRoutes.route("/taskLists").get(function (req, res) {
   let db_connect = dbo.getDb();
   db_connect
       .collection("tasks")
-      .findOne({tagList: true}, function (err, result) {
+      .findOne({allTaskLists: true}, function (err, result) {
         if (err || (!result)) {
           res.json([]);
         } else {
-          res.json(result.tags);
+          res.json(result.taskLists);
         }
       });
 });
 
-// add a tag
-function addTag(tag) {
-  if (!tag || tag.length <= 0) return;
+// add a list
+function addTaskList(list) {
+  if (!list || list.length <= 0) return;
   let db_connect = dbo.getDb();
   db_connect
       .collection("tasks")
-      .findOne({tagList: true}, function (err, result) {
+      .findOne({allTaskLists: true}, function (err, result) {
         if (err) throw err;
 
         // add if not there
         if (!result) {
-          console.log("no tag record");
-          db_connect.collection("tasks").insertOne({tagList: true, tags: [tag]}, function (err, res) {
+          db_connect.collection("tasks").insertOne({allTaskLists: true, taskLists: [list]}, function (err, res) {
             if (err) throw err;
             return;
           });
-        } else if (!result.tags.includes(tag)) {
-          console.log("adding-" + tag);
-          var newList = result.tags;
-          newList.push(tag);
-          newObj =  {$set: {tagList: true,
-                    tags: newList
+        } else if (!result.taskLists.includes(list)) {
+          var newList = result.taskLists;
+          newList.push(list);
+          newObj =  {$set: {allTaskLists: true,
+                    taskLists: newList
                   },};
-          console.log("about to add, result-" + result); 
           db_connect
           .collection("tasks")
           .updateOne({_id: result._id}, newObj, function (err, res) {
@@ -174,7 +171,6 @@ function addTag(tag) {
             return;
           });
         } else {
-          console.log(tag + " already there");
         }
       });
 };

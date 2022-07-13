@@ -15,10 +15,12 @@ export default function MyWork() {
     const [inputText, setInputText] = useState("");
     const [anySelected, setAnySelected] = useState(false);
     
-    // we can pass in state for due and completed (and later tag)
-    const [initDue, initCompleted] = restoreDisplayContext("All", false);
+    // we can pass in state for due date, completed, and list
+    const [initDue, initCompleted, initTaskList] = restoreDisplayContext("All", false, "");
     const [due, setDue] = useState(initDue);
     const [completed, setCompleted] = useState(initCompleted);
+    const [taskList, setTaskList] = useState(initTaskList);
+    const [taskLists, setTaskLists] = useState([]);
  
     const navigate = useNavigate();
     
@@ -28,6 +30,10 @@ export default function MyWork() {
         function getParams() {
             var params = {completed: completed};
             var sDate;
+
+            if (taskList && taskList.length > 0) {
+                params = {...params, taskList: taskList};
+            }
 
             switch (due) {
                 case "Today":
@@ -42,8 +48,8 @@ export default function MyWork() {
             if (sDate.length > 0) {
                 params = {...params, due: sDate};
             }
+            console.log(params);
 
-            // do tags later
             return "?" + new URLSearchParams(params);
         }
 
@@ -61,17 +67,35 @@ export default function MyWork() {
             tasks.map((task) => task.checked = false);
             setTasks(tasks);
         }
+
+        // get the task lists used by the system
+        async function getTaskLists() {
+            const response = await fetch(taskURL('taskLists/'));
+
+            if (!response.ok) {
+                const message = `An error occured: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+
+            const lists = await response.json();
+            setTaskLists(lists);
+        }
+
+
         saveDisplayContext();
+        getTaskLists();
         getTasks();
 
         return;
           // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [tasks.length, completed, due]);
+    }, [tasks.length, completed, due, taskList]);
 
     // set or get the diplay context across sessions
-    function restoreDisplayContext(defaultDue, defaultCompleted) {
+    function restoreDisplayContext(defaultDue, defaultCompleted, defaultList) {
         var cDueDate;
         var cCompleted;
+        var cList;
         if ((cDueDate = getCookie("dueDate")) === undefined) {
             cDueDate = defaultDue;
         }
@@ -82,12 +106,16 @@ export default function MyWork() {
         } else {
             cCompleted = false;
         }
-        return [cDueDate, cCompleted];
+        if ((cList = getCookie("taskList")) === "undefined") {
+            cList = defaultList;
+        }
+        return [cDueDate, cCompleted, cList];
     }
 
     function saveDisplayContext() {
         setCookie("dueDate", due, {'max-age': 60*60*24});
         setCookie("completed", completed, {'max-age': 60*60*24});
+        setCookie("taskList", taskList, {'max-age': 60*60*24});
     }
 
     // handler for typing into the task text box
@@ -108,7 +136,7 @@ export default function MyWork() {
                 item: text,
                 due: dueDate,
                 note: "",
-                tag: "",
+                taskList: "",
                 completed: false
             }
 
@@ -176,6 +204,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
+        setTasks([]);
         setTasks(newItems);
     }
 
@@ -219,6 +248,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
+        setTasks([]);
         setTasks(newItems);
     }
 
@@ -230,22 +260,30 @@ export default function MyWork() {
             return (!item.checked);
         });
 
+        setTasks([]);
         setTasks(newItems);
     }
 
     function menuSettingsCallback(settings) {
+        console.log("settings: " + settings);
         if (settings) {
             setCompleted(settings.completed);
             setDue(settings.due);
+            setTaskList(settings.taskList);
         }
     }
 
     // render
     return (
         <div>
-            <WorkAppBar settingsCallback={menuSettingsCallback} completed={completed} due={due} />
+            <WorkAppBar 
+                settingsCallback={menuSettingsCallback} 
+                completed={completed} due={due} 
+                taskList={taskList}
+                taskLists={taskLists}
+                />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
-                <SettingsDisplay completed={completed} due={due} />
+                <SettingsDisplay completed={completed} due={due} taskList={taskList} />
                 <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
                 <TaskList 
                     tasks={tasks} 

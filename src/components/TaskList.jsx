@@ -1,10 +1,16 @@
-import React from "react";
+import React, {useState} from "react";
 import Task from "./Task";
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 
 export default function TaskList(props) {
+    const [stateCheck, setStateCheck] = useState(false);
+
+    function cbCallback(event, id) {
+
+    }
+
     return (
         <List sx={{ width: 1, 
                     overflow: 'auto', 
@@ -28,6 +34,7 @@ export default function TaskList(props) {
                             key={idx}
                             id={task._id}
                             item={task.item}
+                            checked={task.checked}
                             onChecked={props.onChecked}
                             onEdit={props.onEdit}
                         />
