@@ -58,6 +58,7 @@ export default function MyWork() {
             }
 
             const tasks = await response.json();
+            tasks.map((task) => task.checked = false);
             setTasks(tasks);
         }
         saveDisplayContext();
@@ -127,6 +128,7 @@ export default function MyWork() {
             setInputText("");
 
             // force useEffects
+            jtask.checked = false;
             setTasks(tasks => [...tasks, jtask]);
         }
         //event.preventDefault();
@@ -144,7 +146,7 @@ export default function MyWork() {
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i]._id === id) {
-                tasks[i].checked = event.target.checked;
+                tasks[i].checked = !tasks[i].checked;
             } else if (tasks[i].checked) {
                 any = true;
             }
@@ -174,7 +176,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTimeout(() => setTasks(newItems), 100);
+        setTasks(newItems);
     }
 
     // handler for the task completion button
@@ -217,7 +219,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTimeout(() => setTasks(newItems), 100);
+        setTasks(newItems);
     }
 
     function handlePostpone() {
@@ -228,7 +230,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTimeout(() => setTasks(newItems), 100);
+        setTasks(newItems);
     }
 
     function menuSettingsCallback(settings) {

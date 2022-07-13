@@ -13,7 +13,6 @@ export default function SettingsDisplay(props) {
             text += " ";
         }
 
-        console.log("in display: " + props.completed);
         if (props.completed === true) {
             text += "Complete";
         } else {
