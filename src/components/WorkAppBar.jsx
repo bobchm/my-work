@@ -78,7 +78,7 @@ export default function ButtonAppBar(props) {
               key={0}
               onClick={(event) => onCompletedClick(event)}
             >
-              {completed
+              {completed === true
                 ? <><ListItemIcon><Check /></ListItemIcon>Completed</>
                 : <ListItemText inset>Completed</ListItemText>}
             </MenuItem>

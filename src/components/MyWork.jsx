@@ -73,10 +73,13 @@ export default function MyWork() {
         var cCompleted;
         if ((cDueDate = getCookie("dueDate")) === undefined) {
             cDueDate = defaultDue;
-        } else {
         }
         if ((cCompleted = getCookie("completed")) === undefined) {
             cCompleted = defaultCompleted;
+        } else if (cCompleted === "true") {
+            cCompleted = true;
+        } else {
+            cCompleted = false;
         }
         return [cDueDate, cCompleted];
     }
@@ -171,7 +174,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTasks(newItems);
+        setTimeout(() => setTasks(newItems), 100);
     }
 
     // handler for the task completion button
@@ -179,7 +182,7 @@ export default function MyWork() {
 
         // get the task from the database
         const id_s = id.toString();
-        const response = await fetch(taskURL(`${id_s}`));
+        const response = await fetch(taskURL(`task/${id_s}`));
   
         if (!response.ok) {
           const message = `An error has occured: ${response.statusText}`;
@@ -214,7 +217,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTasks(newItems);
+        setTimeout(() => setTasks(newItems), 100);
     }
 
     function handlePostpone() {
@@ -225,7 +228,7 @@ export default function MyWork() {
             return (!item.checked);
         });
 
-        setTasks(newItems);
+        setTimeout(() => setTasks(newItems), 100);
     }
 
     function menuSettingsCallback(settings) {

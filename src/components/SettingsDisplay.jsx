@@ -12,8 +12,10 @@ export default function SettingsDisplay(props) {
         if (text.length > 0) {
             text += " ";
         }
-        if (props.completed) {
-            text += "Completed";
+
+        console.log("in display: " + props.completed);
+        if (props.completed === true) {
+            text += "Complete";
         } else {
             text += "Incomplete"
         }
