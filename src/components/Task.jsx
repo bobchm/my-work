@@ -26,6 +26,7 @@ export default function Task(props) {
         <ListItemButton role={undefined} dense>
           <ListItemIcon>
             <Checkbox
+              key={props.id}
               edge="start"
               tabIndex={-1}
               disableRipple
@@ -42,7 +43,16 @@ export default function Task(props) {
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'
-            }}} />
+            }}}
+            secondary={props.due}
+            secondaryTypographyProps={{ 
+                style: {
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    fontSize: 10
+            }}}
+             />
         </ListItemButton>
         <Divider />
     </ListItem>       

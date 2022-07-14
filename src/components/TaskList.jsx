@@ -34,6 +34,7 @@ export default function TaskList(props) {
                             key={idx}
                             id={task._id}
                             item={task.item}
+                            due={task.due}
                             checked={task.checked}
                             onChecked={props.onChecked}
                             onEdit={props.onEdit}

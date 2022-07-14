@@ -64,7 +64,7 @@ export default function MyWork() {
 
             const tasks = await response.json();
             tasks.map((task) => task.checked = false);
-            setTasks(tasks);
+            sortAndSetTasks(tasks);
         }
 
         // get the task lists used by the system
@@ -88,6 +88,22 @@ export default function MyWork() {
         return;
           // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tasks.length, completed, due, taskList]);
+
+    // sort tasks based on the current filter criteria and set
+    async function sortAndSetTasks(tasks) {
+        await tasks.sort(function(a, b) {
+            if (a.item < b.item) {
+                return -1;
+            } else if (a.item > b.item) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        console.log(`tasks: ${tasks}`);
+        setTasks(tasks);
+    }
 
     // set or get the diplay context across sessions
     function restoreDisplayContext(defaultDue, defaultCompleted, defaultList) {
@@ -155,7 +171,8 @@ export default function MyWork() {
 
             // force useEffects
             jtask.checked = false;
-            setTasks(tasks => [...tasks, jtask]);
+            tasks.push(jtask);
+            sortAndSetTasks(tasks);
         }
         //event.preventDefault();
     }
@@ -236,8 +253,7 @@ export default function MyWork() {
             return (!thisone);
         });
 
-        setTasks([]);
-        setTimeout(setTasks(newItems), 100);
+        sortAndSetTasks(newItems);
         setAnySelected(false);
     }
 
@@ -250,8 +266,7 @@ export default function MyWork() {
             return (!thisone);
         });
 
-        setTasks([]);
-        setTimeout(setTasks(newItems), 200);
+        sortAndSetTasks(newItems);
         setAnySelected(false);
     }
 
@@ -264,8 +279,7 @@ export default function MyWork() {
             return (!thisone);
         });
 
-        setTasks([]);
-        setTimeout(setTasks(newItems), 100);
+        sortAndSetTasks(newItems);
         setAnySelected(false);
     }
 
