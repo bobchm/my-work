@@ -38,7 +38,6 @@ export default function ButtonAppBar(props) {
     setAnchor(null);
     if (settingsCallback) {
       var options = buildOptions();
-      console.log("options: ", options);
       settingsCallback(options);
     }
   };
@@ -106,7 +105,7 @@ export default function ButtonAppBar(props) {
               </MenuItem>);
             }
             )}
-            { props.taskLists && props.taskLists.length > 0 && <Divider />}
+            {props.taskLists && props.taskLists.length > 0 && <Divider />}
             {props.taskLists && props.taskLists.map(function(tl, idx) {
               return (<MenuItem
                 key={idx}

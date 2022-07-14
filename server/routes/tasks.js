@@ -108,11 +108,11 @@ taskRoutes.route("/update/:id").post(function (req, response) {
       completed: req.body.completed
     },
   };
+  
   db_connect
     .collection("tasks")
     .updateOne(myquery, newvalues, function (err, res) {
       if (err) throw err;
-      console.log("1 document updated");
       addTaskList(req.body.taskList);
       response.json(res);
     });
@@ -124,7 +124,6 @@ taskRoutes.route("/:id").delete((req, response) => {
   let myquery = { _id: ObjectId( req.params.id )};
   db_connect.collection("tasks").deleteOne(myquery, function (err, obj) {
     if (err) throw err;
-    console.log("1 document deleted");
     response.json(obj);
   });
 });
@@ -170,7 +169,33 @@ function addTaskList(list) {
             if (err) throw err;
             return;
           });
-        } else {
+        }
+      });
+};
+
+// delete a task list
+function deleteTaskList(list) {
+  if (!list || list.length <= 0) return;
+  let db_connect = dbo.getDb();
+  db_connect
+      .collection("tasks")
+      .findOne({allTaskLists: true}, function (err, result) {
+        if (err) return;
+
+        // if not there, just return
+        if (!result) return;
+
+        if (result.taskLists.includes(list)) {
+          var newList = result.taskLists.filter(tl => tl != list);
+          newObj =  {$set: {allTaskLists: true,
+                    taskLists: newList
+                  },};
+          db_connect
+          .collection("tasks")
+          .updateOne({_id: result._id}, newObj, function (err, res) {
+            if (err) throw err;
+            return;
+          });
         }
       });
 };

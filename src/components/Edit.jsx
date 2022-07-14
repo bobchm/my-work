@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import MyDatePicker from "./MyDatePicker";
+import TextPredictNew from "./TextPredictNew";
 import { encodeDate } from "../dates";
 import taskURL from "../taskURL";
 
@@ -22,6 +23,7 @@ export default function Edit() {
         taskList: "",
         completed: false
       });
+      const [taskLists, setTaskLists] = useState([]);
       const params = useParams();
       const navigate = useNavigate();
     
@@ -45,8 +47,23 @@ export default function Edit() {
     
           setForm(task);
         }
-    
+        
+         // get the task lists used by the system
+         async function getTaskLists() {
+            const response = await fetch(taskURL('taskLists/'));
+
+            if (!response.ok) {
+                const message = `An error occured: ${response.statusText}`;
+                window.alert(message);
+                return;
+            }
+
+            const lists = await response.json();
+            setTaskLists(lists);
+        }
+
         fetchData();
+        getTaskLists();
     
         return;
       }, [params.id, navigate]);
@@ -83,6 +100,11 @@ export default function Edit() {
       // callback for the date picker
       function handleDateChange(newValue) {
         updateForm({ due: encodeDate(newValue) });
+      }
+
+      function handleTaskListChange(newValue) {
+        console.log(`handleTaskListChange: ${newValue}`)
+        updateForm({taskList: newValue});
       }
     
       // This following section will display the form that takes input from the user to update the data.
@@ -128,11 +150,11 @@ export default function Edit() {
                           onChange={(e) => updateForm({ note: e.target.value })}
                           label={"Note"}
                       />
-                      <TextField
-                          value={form.taskList}
-                          onChange={(e) => updateForm({ taskList: e.target.value })}
-                          label={"Task List"}
-                      />
+                      <TextPredictNew 
+                            list={taskLists}
+                            callback={handleTaskListChange}
+                            value={form.taskList}
+                        />
                       <Stack direction="row" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                           <Button
                               onClick={event => onSubmit(event)}

@@ -48,7 +48,6 @@ export default function MyWork() {
             if (sDate.length > 0) {
                 params = {...params, due: sDate};
             }
-            console.log(params);
 
             return "?" + new URLSearchParams(params);
         }
@@ -81,7 +80,6 @@ export default function MyWork() {
             const lists = await response.json();
             setTaskLists(lists);
         }
-
 
         saveDisplayContext();
         getTaskLists();
@@ -171,10 +169,11 @@ export default function MyWork() {
 
     // they toggled one of the task checkboxes - enable/disable relevant buttons
     function doCheckboxToggle(event, id) {
+        console.log(`doCheckboxToggle: ${id}`);
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i]._id === id) {
-                tasks[i].checked = !tasks[i].checked;
+                tasks[i].checked = event.target.checked;
             } else if (tasks[i].checked) {
                 any = true;
             }
@@ -193,19 +192,6 @@ export default function MyWork() {
         await fetch(taskURL(`${id}`), {
             method: "DELETE"
         });        
-    }
-
-    // handler for the delete button
-    function handleDelete() {
-        const newItems = tasks.filter((item) => {
-            if (item.checked) {
-                deleteTask(item._id);
-            }
-            return (!item.checked);
-        });
-
-        setTasks([]);
-        setTasks(newItems);
     }
 
     // handler for the task completion button
@@ -240,32 +226,50 @@ export default function MyWork() {
           });
     }
 
-    function handleComplete() {
+    // handler for the delete button
+    function handleDelete() {
         const newItems = tasks.filter((item) => {
-            if (item.checked) {
-                changeTask(item._id, "completed", true);
+            var thisone = item.checked;
+            if (thisone) {
+                deleteTask(item._id);
             }
-            return (!item.checked);
+            return (!thisone);
         });
 
         setTasks([]);
-        setTasks(newItems);
+        setTimeout(setTasks(newItems), 100);
+        setAnySelected(false);
+    }
+
+    function handleComplete() {
+        const newItems = tasks.filter((item) => {
+            var thisone = item.checked
+            if (thisone) {
+                changeTask(item._id, "completed", true);
+            }
+            return (!thisone);
+        });
+
+        setTasks([]);
+        setTimeout(setTasks(newItems), 200);
+        setAnySelected(false);
     }
 
     function handlePostpone() {
         const newItems = tasks.filter((item) => {
-            if (item.checked) {
+            var thisone = item.checked;
+            if (thisone) {
                 changeTask(item._id, "due", addDays(item.due, 1));
             }
-            return (!item.checked);
+            return (!thisone);
         });
 
         setTasks([]);
-        setTasks(newItems);
+        setTimeout(setTasks(newItems), 100);
+        setAnySelected(false);
     }
 
     function menuSettingsCallback(settings) {
-        console.log("settings: " + settings);
         if (settings) {
             setCompleted(settings.completed);
             setDue(settings.due);
