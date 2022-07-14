@@ -16,7 +16,7 @@ body {
     width: 100%;
     height: auto;
     min-height: 380px;
-    max-width: 500px;
+    max-width: 1500px;
     min-width: 250px;
     background: #f2f6f8;
     background-size: 25px 25px;
@@ -52,4 +52,3 @@ body {
   margin-bottom: 10px;
   width: 250px;
 }
-  

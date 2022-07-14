@@ -14,8 +14,8 @@ export default function TaskList(props) {
     return (
         <List sx={{ width: 1, 
                     overflow: 'auto', 
-                    minWidth: 360, 
-                    maxWidth: 360, 
+                    minWidth: 600, 
+                    maxWidth: 600, 
                     minHeight: 400, 
                     maxHeight: 400, 
                     bgcolor: 'background.paper',
@@ -34,7 +34,7 @@ export default function TaskList(props) {
                             key={idx}
                             id={task._id}
                             item={task.item}
-                            due={task.due}
+                            due={props.showDates ? task.due : ""}
                             checked={task.checked}
                             onChecked={props.onChecked}
                             onEdit={props.onEdit}

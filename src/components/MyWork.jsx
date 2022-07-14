@@ -302,11 +302,12 @@ export default function MyWork() {
                 />
             <Stack className="container" direction="column" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
                 <SettingsDisplay completed={completed} due={due} taskList={taskList} />
-                <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} />
+                <WorkInput addItem={addTaskSubmit} handleChange={handleChange} inputText={inputText} sx={{width: "100%"}}/>
                 <TaskList 
                     tasks={tasks} 
                     onChecked={doCheckboxToggle}
                     onEdit={handleEdit}
+                    showDates={due === "All"}
                 />
                 <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
             </Stack>

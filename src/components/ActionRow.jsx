@@ -7,7 +7,7 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 
 export default function ActionRow(props) {
     return (
-        <Stack direction="row" alignItems="flex-start" justifyContent="flex-start" spacing={2}>
+        <Stack direction="row" alignItems="flex-start" justifyContent="center" spacing={2} sx={{width: "100%"}}>
             <IconButton 
                 aria-label="complete" 
                 disabled={!props.anySelected}

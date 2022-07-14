@@ -5,8 +5,8 @@ import Grid from '@mui/material/Grid';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 export default function WorkingInput(props) {
-    return (<form onSubmit={props.addItem}>
-        <Grid container spacing={2} alignItems="center">
+    return (<form onSubmit={props.addItem} sx={{width: "2000px"}}>
+        <Grid className="InputGrid" container spacing={2} alignItems="center">
             <Grid item xs={10}>
                 <TextField fullWidth  variant="outlined"
                     onChange={props.handleChange} 
