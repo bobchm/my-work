@@ -14,6 +14,7 @@ export default function MyDatePicker(props) {
           label={props.label}
           inputFormat="MM/dd/yyyy"
           value={props.date}
+          sx={{ width: 200 }}
           onChange={function(newValue) {
                     setValue(newValue);
                     props.callback(newValue);

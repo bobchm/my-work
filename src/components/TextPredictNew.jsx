@@ -54,7 +54,7 @@ export default function TextPredictNew(props) {
         return option;
       }}
       renderOption={(props, option) => <li {...props}>{option}</li>}
-      sx={{ width: 300 }}
+      sx={{ width: 245 }}
       freeSolo
       renderInput={(params) => (
         <TextField {...params} label="Task List Name" />

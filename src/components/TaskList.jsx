@@ -14,7 +14,8 @@ export default function TaskList(props) {
     return (
         <List sx={{ width: 1, 
                     overflow: 'auto', 
-                    minWidth: 600, 
+                    width: "100%",
+                    minWidth: 400, 
                     maxWidth: 600, 
                     minHeight: 400, 
                     maxHeight: 400, 

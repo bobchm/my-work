@@ -28,6 +28,7 @@ export default function ActionRow(props) {
                 color="primary"
                 onClick={props.onPostpone}>
                 <PostAddIcon />
-            </IconButton>        </Stack>
+            </IconButton>        
+        </Stack>
     )
 }

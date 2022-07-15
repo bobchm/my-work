@@ -59,7 +59,7 @@ export default function ButtonAppBar(props) {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flex: 1, flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
