@@ -86,6 +86,7 @@ taskRoutes.route("/task/add").post(function (req, response) {
     due: req.body.due,
     note: req.body.note,
     taskList: req.body.taskList,
+    recurrence: req.body.recurrence,
     completed: req.body.completed
   };
   db_connect.collection("tasks").insertOne(myobj, function (err, res) {
@@ -105,6 +106,7 @@ taskRoutes.route("/update/:id").post(function (req, response) {
       due: req.body.due,
       note: req.body.note,
       taskList: req.body.taskList,
+      recurrence: req.body.recurrence,
       completed: req.body.completed
     },
   };

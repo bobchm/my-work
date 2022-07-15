@@ -10,6 +10,23 @@
         return encodeDate(newDate);
     }
 
+    function addMonths(dateS, nMonths) {
+        var startDate = new Date(dateS);
+        var newDate = new Date();
+        newDate.setMonth(startDate.getMonth() + nMonths);
+    }
+
+    function addYears(dateS, nYears) {
+        var startDate = new Date(dateS);
+        var newDate = new Date();
+        newDate.setFullYear(oldDate.getFullYear() + nYears);
+    }
+
+    function getDayOfWeek(dateS) {
+        var date = new Date(dateS);
+        return date.toLocaleDateString('en-US', {weekday: 'long'});
+    }
+
     function getToday() {
         return encodeDate(new Date());
     }
@@ -27,5 +44,5 @@
         return 0;
     }
 
-    export {encodeDate, addDays, getToday, compareDates};
+    export {encodeDate, addDays, addMonths, addYears, getToday, getDayOfWeek, compareDates};
     
