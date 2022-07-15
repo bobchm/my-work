@@ -265,11 +265,11 @@ export default function MyWork() {
         setAnySelected(false);
     }
 
-    function handleComplete() {
+    function handleToggleComplete() {
         const newItems = tasks.filter((item) => {
             var thisone = item.checked
             if (thisone) {
-                changeTask(item._id, "completed", true);
+                changeTask(item._id, "completed", !item.completed);
             }
             return (!thisone);
         });
@@ -318,7 +318,13 @@ export default function MyWork() {
                     showDates={isMixingDates()}
                     warnOnLate={true}
                 />
-                <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
+                <ActionRow 
+                    onDelete={handleDelete} 
+                    onToggleComplete={handleToggleComplete} 
+                    onPostpone={handlePostpone} 
+                    anySelected={anySelected}
+                    doComplete={!completed}
+                />
             </Stack>
         </div>
     );
