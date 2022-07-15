@@ -13,6 +13,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import MyDatePicker from "./MyDatePicker";
 import TextPredictNew from "./TextPredictNew";
 import { encodeDate } from "../dates";
+import {getRecurrenceOptions, getNoRecurrence, isRecurrence, updateForRecurrence} from "../recurrences";
 import taskURL from "../taskURL";
 
 export default function Edit() {
@@ -21,6 +22,7 @@ export default function Edit() {
         due: "",
         note: "",
         taskList: "",
+        recurrence: getNoRecurrence(),
         completed: false
       });
       const [taskLists, setTaskLists] = useState([]);
@@ -82,6 +84,7 @@ export default function Edit() {
           due: form.due,
           note: form.note,
           taskList: form.taskList,
+          recurrence: form.completed.recurrence,
           completed: form.completed
         };
     
@@ -133,7 +136,7 @@ export default function Edit() {
                     direction="column" 
                     alignItems="flex-start" 
                     justifyContent="flex-start" 
-                    sx={{maxHeight: 200}}
+                    sx={{maxHeight: "500px"}}
                     spacing={2}>
                       <TextField
                           value={form.item}
@@ -151,6 +154,12 @@ export default function Edit() {
                           value={form.note}
                           onChange={(e) => updateForm({ note: e.target.value })}
                           label={"Note"}
+                          fullWidth
+                      />
+                      <TextField
+                          value={form.recurrence}
+                          onChange={(e) => updateForm({ recurrence: e.target.value })}
+                          label={"Recurs"}
                           fullWidth
                       />
                       <TextPredictNew 

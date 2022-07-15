@@ -28,67 +28,68 @@ export default function MyWork() {
     // This fetches the tasks from the database.
     useEffect(() => {
 
-        function getParams() {
-            var params = {completed: completed};
-            var sDate;
-
-            if (taskList && taskList.length > 0) {
-                params = {...params, taskList: taskList};
-            }
-
-            switch (due) {
-                case "Today":
-                    sDate = getToday();
-                    break;
-                case "Tomorrow":
-                    sDate = addDays(getToday(), 1);
-                    break;
-                default:
-                    sDate = "";
-            }
-            if (sDate.length > 0) {
-                params = {...params, due: sDate};
-            }
-
-            return "?" + new URLSearchParams(params);
-        }
-
-        // get all or filtered tasks from MongoDB
-        async function getTasks() {
-            const response = await fetch(taskURL('task/' + getParams()));
-
-            if (!response.ok) {
-                const message = `An error occured: ${response.statusText}`;
-                window.alert(message);
-                return;
-            }
-
-            const tasks = await response.json();
-            tasks.map((task) => task.checked = false);
-            sortAndSetTasks(tasks);
-        }
-
-        // get the task lists used by the system
-        async function getTaskLists() {
-            const response = await fetch(taskURL('taskLists/'));
-
-            if (!response.ok) {
-                const message = `An error occured: ${response.statusText}`;
-                window.alert(message);
-                return;
-            }
-
-            const lists = await response.json();
-            setTaskLists(lists);
-        }
 
         saveDisplayContext();
-        getTaskLists();
-        getTasks();
+        updateTaskLists();
+        updateTasks();
 
         return;
           // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tasks.length, completed, due, taskList]);
+
+    function getParams() {
+        var params = {completed: completed};
+        var sDate;
+
+        if (taskList && taskList.length > 0) {
+            params = {...params, taskList: taskList};
+        }
+
+        switch (due) {
+            case "Today":
+                sDate = getToday();
+                break;
+            case "Tomorrow":
+                sDate = addDays(getToday(), 1);
+                break;
+            default:
+                sDate = "";
+        }
+        if (sDate.length > 0) {
+            params = {...params, due: sDate};
+        }
+
+        return "?" + new URLSearchParams(params);
+    }
+
+    // get all or filtered tasks from MongoDB
+    async function updateTasks() {
+        const response = await fetch(taskURL('task/' + getParams()));
+
+        if (!response.ok) {
+            const message = `An error occured: ${response.statusText}`;
+            window.alert(message);
+            return;
+        }
+
+        const tasks = await response.json();
+        tasks.map((task) => task.checked = false);
+        sortAndSetTasks(tasks);
+    }
+
+    // get the task lists used by the system
+    async function updateTaskLists() {
+        const response = await fetch(taskURL('taskLists/'));
+
+        if (!response.ok) {
+            const message = `An error occured: ${response.statusText}`;
+            window.alert(message);
+            return;
+        }
+
+        const lists = await response.json();
+        setTaskLists(lists);
+    }
 
     // sort tasks based on the current filter criteria and set
     async function sortAndSetTasks(tasks) {
@@ -106,7 +107,6 @@ export default function MyWork() {
             }
         });
 
-        console.log(`tasks: ${tasks}`);
         setTasks(tasks);
     }
 
