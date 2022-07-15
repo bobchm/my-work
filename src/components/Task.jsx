@@ -40,6 +40,7 @@ export default function Task(props) {
             primaryTypographyProps={{ 
                 variant: 'subtitle2', 
                 style: {
+                    color: props.taskColor,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis'

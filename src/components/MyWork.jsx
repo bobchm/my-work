@@ -6,7 +6,7 @@ import SettingsDisplay from "./SettingsDisplay";
 import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
-import {addDays, getToday} from "../dates";
+import {addDays, getToday, compareDates} from "../dates";
 import { getCookie, setCookie } from "../cookies";
 import taskURL from "../taskURL";
 
@@ -92,6 +92,10 @@ export default function MyWork() {
     // sort tasks based on the current filter criteria and set
     async function sortAndSetTasks(tasks) {
         await tasks.sort(function(a, b) {
+            if (isMixingDates()) {
+                var ans = compareDates(a.due, b.due);
+                if (ans !== 0) return ans;
+            }
             if (a.item < b.item) {
                 return -1;
             } else if (a.item > b.item) {
@@ -150,7 +154,7 @@ export default function MyWork() {
                 item: text,
                 due: dueDate,
                 note: "",
-                taskList: "",
+                taskList: taskList,
                 completed: false
             }
 
@@ -175,6 +179,10 @@ export default function MyWork() {
             sortAndSetTasks(tasks);
         }
         //event.preventDefault();
+    }
+
+    function isMixingDates() {
+        return due === "All";
     }
 
     function addTaskSubmit(event) {
@@ -307,7 +315,8 @@ export default function MyWork() {
                     tasks={tasks} 
                     onChecked={doCheckboxToggle}
                     onEdit={handleEdit}
-                    showDates={due === "All"}
+                    showDates={isMixingDates()}
+                    warnOnLate={true}
                 />
                 <ActionRow onDelete={handleDelete} onComplete={handleComplete} onPostpone={handlePostpone} anySelected={anySelected}/>
             </Stack>

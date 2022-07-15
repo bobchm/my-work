@@ -139,9 +139,10 @@ export default function Edit() {
                           value={form.item}
                           onChange={(e) => updateForm({ item: e.target.value })}
                           label={"Task"}
-                          sx={{ width: 245 }}
+                          fullWidth
                       />
                       <MyDatePicker
+                        sx={{width: "280px"}}
                         date={new Date(form.due)}
                         label={"Due Date"}
                         callback={handleDateChange}
@@ -150,7 +151,7 @@ export default function Edit() {
                           value={form.note}
                           onChange={(e) => updateForm({ note: e.target.value })}
                           label={"Note"}
-                          sx={{ width: 245 }}
+                          fullWidth
                       />
                       <TextPredictNew 
                             list={taskLists}

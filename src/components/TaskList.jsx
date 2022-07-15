@@ -2,13 +2,12 @@ import React, {useState} from "react";
 import Task from "./Task";
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider'
-import Typography from '@mui/material/Typography'
+import {compareDates, getToday} from "../dates";
 
 export default function TaskList(props) {
-    const [stateCheck, setStateCheck] = useState(false);
 
-    function cbCallback(event, id) {
-
+    function getTaskColor(task, doWarnOnLate) {
+        return ((doWarnOnLate && compareDates(task.due, getToday())) ? "red" : "black");
     }
 
     return (
@@ -36,6 +35,7 @@ export default function TaskList(props) {
                             id={task._id}
                             item={task.item}
                             due={props.showDates ? task.due : ""}
+                            taskColor={getTaskColor(task, props.warnOnLate)}
                             checked={task.checked}
                             onChecked={props.onChecked}
                             onEdit={props.onEdit}
