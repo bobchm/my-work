@@ -108,24 +108,53 @@ taskRoutes.route("/update/:id").post(function (req, response) {
       completed: req.body.completed
     },
   };
-  
+
+  // first get the current document to store the task list for possible future deletion
   db_connect
     .collection("tasks")
-    .updateOne(myquery, newvalues, function (err, res) {
+    .findOne(myquery, function (err, result) {
       if (err) throw err;
-      addTaskList(req.body.taskList);
-      response.json(res);
-    });
+      if (!result) {
+        response.json(result);
+        return;
+      }
+
+      var prevTaskList = result.taskList;  
+      db_connect
+        .collection("tasks")
+        .updateOne(myquery, newvalues, function (err, res) {
+        if (err) throw err;
+        if (prevTaskList !== req.body.taskList) {
+          maybeRemoveTaskList(prevTaskList);
+          addTaskList(req.body.taskList);
+        }
+        response.json(res);
+      });
+    })
 });
 
 // This section will help you delete a record
 taskRoutes.route("/:id").delete((req, response) => {
   let db_connect = dbo.getDb();
   let myquery = { _id: ObjectId( req.params.id )};
-  db_connect.collection("tasks").deleteOne(myquery, function (err, obj) {
-    if (err) throw err;
-    response.json(obj);
-  });
+  
+  // first get the current document to store the task list for possible future deletion
+  db_connect
+    .collection("tasks")
+    .findOne(myquery, function (err, result) {
+      if (err) throw err;
+      if (!result) {
+        response.json(result);
+        return;
+      }
+
+      var prevTaskList = result.taskList;  
+      db_connect.collection("tasks").deleteOne(myquery, function (err, obj) {
+        if (err) throw err;
+        response.json(obj);
+        maybeRemoveTaskList(prevTaskList);
+      });
+    });
 });
 
 // This section gets a list of all lists
@@ -172,6 +201,20 @@ function addTaskList(list) {
         }
       });
 };
+
+// remove a task list if nobody is using it
+function maybeRemoveTaskList(list) {
+  let db_connect = dbo.getDb();
+  let myquery = { taskList: list};
+  db_connect
+      .collection("tasks")
+      .findOne(myquery, function (err, result) {
+        if (err) throw err;
+        if (!result) {
+          deleteTaskList(list);
+        }
+      });
+}
 
 // delete a task list
 function deleteTaskList(list) {
