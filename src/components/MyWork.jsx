@@ -380,6 +380,7 @@ export default function MyWork() {
                 <TaskList 
                     tasks={tasks} 
                     onChecked={doCheckboxToggle}
+                    allowEdit={!completed}
                     onEdit={handleEdit}
                     showDates={isMixingDates()}
                     warnOnLate={true}

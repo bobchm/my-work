@@ -17,10 +17,10 @@ export default function Task(props) {
           <IconButton 
             edge="end" 
             aria-label="comments" 
-            onClick={event => props.onEdit(event, props.id)}
+            onClick={event => props.allowEdit && props.onEdit(event, props.id)}
             >
             {props.isRecurrence && <ReplayIcon />}
-            <EditIcon />
+            {props.allowEdit && <EditIcon />}
           </IconButton>
         }
         disablePadding

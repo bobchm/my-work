@@ -25,7 +25,7 @@ export default function ActionRow(props) {
             </IconButton>
             <IconButton 
                 aria-label="postpone" 
-                disabled={!props.anySelected} 
+                disabled={!props.anySelected || !props.doComplete} 
                 color="primary"
                 onClick={props.onPostpone}>
                 <PostAddIcon />

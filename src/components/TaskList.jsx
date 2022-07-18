@@ -35,6 +35,7 @@ export default function TaskList(props) {
                             key={idx}
                             id={task._id}
                             item={task.item}
+                            allowEdit={props.allowEdit}
                             due={props.showDates ? task.due + (isRecurrence(task.recurrence) ? "@" + task.recurrence: ""): ""}
                             taskColor={getTaskColor(task, props.warnOnLate)}
                             checked={task.checked}
