@@ -7,6 +7,7 @@ import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import ReplayIcon from '@mui/icons-material/Replay';
 
 export default function Task(props) {
 
@@ -18,6 +19,7 @@ export default function Task(props) {
             aria-label="comments" 
             onClick={event => props.onEdit(event, props.id)}
             >
+            {props.isRecurrence && <ReplayIcon />}
             <EditIcon />
           </IconButton>
         }

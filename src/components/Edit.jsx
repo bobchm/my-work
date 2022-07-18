@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import Autocomplete from '@mui/material/Autocomplete';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import MyDatePicker from "./MyDatePicker";
@@ -76,6 +77,13 @@ export default function Edit() {
           return { ...prev, ...value };
         });
       }
+
+      function updateRecurrence(newValue) {
+        if (!newValue || newValue.length <= 0 || !getRecurrenceOptions().includes(newValue)) {
+          newValue = "None";
+        }
+        updateForm({recurrence: newValue});
+      }
     
       async function onSubmit(e) {
         e.preventDefault();
@@ -84,7 +92,7 @@ export default function Edit() {
           due: form.due,
           note: form.note,
           taskList: form.taskList,
-          recurrence: form.completed.recurrence,
+          recurrence: form.recurrence,
           completed: form.completed
         };
     
@@ -156,11 +164,12 @@ export default function Edit() {
                           label={"Note"}
                           fullWidth
                       />
-                      <TextField
+                      <Autocomplete
                           value={form.recurrence}
-                          onChange={(e) => updateForm({ recurrence: e.target.value })}
-                          label={"Recurs"}
+                          options={getRecurrenceOptions()}
+                          onChange={(event, newValue) => updateRecurrence(newValue)}
                           fullWidth
+                          renderInput={(params) => <TextField {...params} label="Recurs" />}
                       />
                       <TextPredictNew 
                             list={taskLists}

@@ -38,6 +38,22 @@ function parseQuery(reqQuery) {
     qry += '"due": "' + reqQuery.due + '"';
   }
   
+  if (validQP(reqQuery.item)) {
+    if (any) {
+      qry += ", ";
+    }
+    any = true;
+    qry += '"item": "' + reqQuery.item + '"';
+  }
+  
+  if (validQP(reqQuery.recurrence)) {
+    if (any) {
+      qry += ", ";
+    }
+    any = true;
+    qry += '"recurrence": "' + reqQuery.recurrence + '"';
+  }
+  
   if (validQP(reqQuery.taskList)) {
     if (any) {
       qry += ", ";

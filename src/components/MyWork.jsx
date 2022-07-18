@@ -28,7 +28,6 @@ export default function MyWork() {
     // This fetches the tasks from the database.
     useEffect(() => {
 
-
         saveDisplayContext();
         updateTaskLists();
         updateTasks();
@@ -143,6 +142,21 @@ export default function MyWork() {
         setInputText(newValue);
     }
 
+    // add task to the database
+    async function addTaskToDB(task) {
+        await fetch(taskURL("task/add"), {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(task),
+          })
+          .catch(error => {
+            window.alert(error);
+            return;
+          });
+    }
+
     // add a new task
     async function addTask(event) {
         var text = inputText.trim();
@@ -160,19 +174,8 @@ export default function MyWork() {
                 completed: false
             }
 
-            await fetch(taskURL("task/add"), {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jtask),
-              })
-              .catch(error => {
-                window.alert(error);
-                return;
-              });
+            addTaskToDB(jtask);
           
-
             setInputText("");
 
             // force useEffects
@@ -196,7 +199,6 @@ export default function MyWork() {
 
     // they toggled one of the task checkboxes - enable/disable relevant buttons
     function doCheckboxToggle(event, id) {
-        console.log(`doCheckboxToggle: ${id}`);
         var any = event.target.checked;
         for (let i = 0; i < tasks.length; i++) {
             if (tasks[i]._id === id) {
@@ -214,11 +216,30 @@ export default function MyWork() {
         navigate(`/edit/${id}?due=${due}&completed=${completed}`);
     }
 
-    // delete a task from MongoDB
+    // delete a task from MongoDB based on id
     async function deleteTask(id) {
         await fetch(taskURL(`${id}`), {
             method: "DELETE"
         });        
+    }
+
+    // delete a task from MongoDB based on description
+    async function deleteTaskFromQuery(qry) {
+
+        var qry_S = "?" + new URLSearchParams(qry);
+        const response = await fetch(taskURL('task/' + qry_S));
+
+        if (!response.ok) {
+            console.log(`An error occured: ${response.statusText}`);
+            return;
+        }
+
+        const tasks = await response.json();
+        if (tasks && tasks.length > 0) {
+            await fetch(taskURL(`${tasks[0]._id}`), {
+                method: "DELETE"
+            });
+        }        
     }
 
     // handler for the task completion button
@@ -267,17 +288,60 @@ export default function MyWork() {
         setAnySelected(false);
     }
 
+    // deal with recurring tasks - if completing a recurring task, schedule the next recurrence if
+    //   "uncompleting" a recurring task, try to delete the scheduled task created when it was completed
+    //   return true if a task was created or destroyed, false otherwise
+    function handleRecurrence(task) {
+        if (!isRecurrence(task.recurrence)) {
+            return false;
+        }
+
+        // if item is incomplete, that means we're going from incomplete to complete so have to create the next occurence
+        if (!task.completed) {
+            var newTask = {
+                item: task.item,
+                due: updateForRecurrence(task.due, task.recurrence),
+                note: task.note,
+                taskList: task.taskList,
+                recurrence: task.recurrence,
+                completed: false
+            }
+            addTaskToDB(newTask);
+        } else {
+            // this is a recurring task that was marked as complete so generated a follow-on task
+            var qry = {
+                item: task.item,
+                due: updateForRecurrence(task.due, task.recurrence),
+                recurrence: task.recurrence,
+            }
+            deleteTaskFromQuery(qry);
+        }
+        return true;
+    }
+
+    // handler for toggling the complete flag of marked tasks
     function handleToggleComplete() {
+        var resetTasks = false;
         const newItems = tasks.filter((item) => {
             var thisone = item.checked
             if (thisone) {
                 changeTask(item._id, "completed", !item.completed);
+
+                // if we're completing (or uncompleting) a recurring task, that need special handling
+                if (handleRecurrence(item)) {
+                    resetTasks = true;
+                }
             }
             return (!thisone);
         });
 
-        sortAndSetTasks(newItems);
         setAnySelected(false);
+        if (resetTasks) {
+            setTasks([]);
+            setTimeout(() => updateTasks, 100);
+        } else {
+            sortAndSetTasks(newItems);
+        }
     }
 
     function handlePostpone() {

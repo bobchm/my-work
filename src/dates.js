@@ -19,7 +19,7 @@
     function addYears(dateS, nYears) {
         var startDate = new Date(dateS);
         var newDate = new Date();
-        newDate.setFullYear(oldDate.getFullYear() + nYears);
+        newDate.setFullYear(startDate.getFullYear() + nYears);
     }
 
     function getDayOfWeek(dateS) {

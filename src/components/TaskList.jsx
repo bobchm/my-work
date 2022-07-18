@@ -3,11 +3,12 @@ import Task from "./Task";
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider'
 import {compareDates, getToday} from "../dates";
+import { isRecurrence } from "../recurrences";
 
 export default function TaskList(props) {
 
     function getTaskColor(task, doWarnOnLate) {
-        return ((doWarnOnLate && compareDates(task.due, getToday())) ? "red" : "black");
+        return ((doWarnOnLate && (compareDates(task.due, getToday()) < 0)) ? "red" : "black");
     }
 
     return (
@@ -34,10 +35,11 @@ export default function TaskList(props) {
                             key={idx}
                             id={task._id}
                             item={task.item}
-                            due={props.showDates ? task.due : ""}
+                            due={props.showDates ? task.due + (isRecurrence(task.recurrence) ? "@" + task.recurrence: ""): ""}
                             taskColor={getTaskColor(task, props.warnOnLate)}
                             checked={task.checked}
                             onChecked={props.onChecked}
+                            isRecurrence={isRecurrence(task.recurrence)}
                             onEdit={props.onEdit}
                         />
                         <Divider />
