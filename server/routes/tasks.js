@@ -207,7 +207,7 @@ function addTaskList(list) {
         } else if (!result.taskLists.includes(list)) {
           var newList = result.taskLists;
           newList.push(list);
-          newObj =  {$set: {allTaskLists: true,
+          var newObj =  {$set: {allTaskLists: true,
                     taskLists: newList
                   },};
           db_connect
@@ -247,8 +247,8 @@ function deleteTaskList(list) {
         if (!result) return;
 
         if (result.taskLists.includes(list)) {
-          var newList = result.taskLists.filter(tl => tl != list);
-          newObj =  {$set: {allTaskLists: true,
+          var newList = result.taskLists.filter(tl => tl !== list);
+          var newObj =  {$set: {allTaskLists: true,
                     taskLists: newList
                   },};
           db_connect

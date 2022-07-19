@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import Task from "./Task";
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider'
@@ -12,8 +12,7 @@ export default function TaskList(props) {
     }
 
     return (
-        <List sx={{ width: 1, 
-                    overflow: 'auto', 
+        <List sx={{ overflow: 'auto', 
                     width: "100%",
                     minWidth: 400, 
                     maxWidth: 600, 
