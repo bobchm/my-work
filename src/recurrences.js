@@ -28,7 +28,7 @@ function updateForRecurrence(oldDate, rec) {
             break;
 
         case "Weekdays":
-            if (getDayOfWeek(oldDate) == "Friday") {
+            if (getDayOfWeek(oldDate) === "Friday") {
                 newDate = addDays(oldDate, 3);
             } else {
                 newDate = addDays(oldDate, 1);

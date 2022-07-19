@@ -14,7 +14,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import MyDatePicker from "./MyDatePicker";
 import TextPredictNew from "./TextPredictNew";
 import { encodeDate } from "../dates";
-import {getRecurrenceOptions, getNoRecurrence, isRecurrence, updateForRecurrence} from "../recurrences";
+import {getRecurrenceOptions, getNoRecurrence} from "../recurrences";
 import taskURL from "../taskURL";
 
 export default function Edit() {

@@ -7,7 +7,7 @@ import ActionRow from "./ActionRow";
 import WorkInput from "./WorkInput";
 import TaskList from "./TaskList";
 import {addDays, getToday, compareDates} from "../dates";
-import {getRecurrenceOptions, getNoRecurrence, isRecurrence, updateForRecurrence} from "../recurrences";
+import {getNoRecurrence, isRecurrence, updateForRecurrence} from "../recurrences";
 import { getCookie, setCookie } from "../cookies";
 import taskURL from "../taskURL";
 
@@ -383,7 +383,7 @@ export default function MyWork() {
                     allowEdit={!completed}
                     onEdit={handleEdit}
                     showDates={isMixingDates()}
-                    warnOnLate={true}
+                    warnOnLate={!completed}
                 />
                 <ActionRow 
                     onDelete={handleDelete} 

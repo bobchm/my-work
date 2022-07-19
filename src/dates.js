@@ -14,12 +14,14 @@
         var startDate = new Date(dateS);
         var newDate = new Date();
         newDate.setMonth(startDate.getMonth() + nMonths);
+        return encodeDate(newDate);
     }
 
     function addYears(dateS, nYears) {
         var startDate = new Date(dateS);
         var newDate = new Date();
         newDate.setFullYear(startDate.getFullYear() + nYears);
+        return encodeDate(newDate);
     }
 
     function getDayOfWeek(dateS) {
